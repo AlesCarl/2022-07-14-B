@@ -1,7 +1,11 @@
 package it.polito.tdp.nyc;
 
 import java.net.URL;
+import java.util.Collections;
+import java.util.List;
 import java.util.ResourceBundle;
+
+import it.polito.tdp.nyc.model.Arco;
 import it.polito.tdp.nyc.model.Model;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -41,7 +45,7 @@ public class FXMLController {
     private TableColumn<?, ?> clV2; // Value injected by FXMLLoader
 
     @FXML // fx:id="cmbBorough"
-    private ComboBox<?> cmbBorough; // Value injected by FXMLLoader
+    private ComboBox<String> cmbBorough; // Value injected by FXMLLoader
 
     @FXML // fx:id="tblArchi"
     private TableView<?> tblArchi; // Value injected by FXMLLoader
@@ -57,12 +61,31 @@ public class FXMLController {
 
     @FXML
     void doAnalisiArchi(ActionEvent event) {
-    
+    	
+    	
+    	this.txtResult.appendText("\nArchi con peso minore del peso medio ( "+model.getPesoMedio()+" ): \n");
+
+    	List<Arco> temp= model.getAnalisiArchi(); 
+    	Collections.sort(temp);
+    	for(Arco aa: temp ) {
+        	this.txtResult.appendText("\n"+aa);
+
+    	}
+    	
     }
 
     @FXML
     void doCreaGrafo(ActionEvent event) {
-    
+    	
+    	String borgo=null; 
+        borgo= this.cmbBorough.getValue(); 
+        
+        if(borgo==null) {
+        	this.txtResult.appendText("\nseleziona un valore");
+        }
+        
+        
+        this.model.creaGrafo(borgo);
     }
 
     @FXML
@@ -90,6 +113,11 @@ public class FXMLController {
     
     public void setModel(Model model) {
     	this.model = model;
+    	this.setCmbx();
     }
+
+	private void setCmbx() {
+	this.cmbBorough.getItems().setAll(model.getAllBorhi()); 
+	}
 
 }

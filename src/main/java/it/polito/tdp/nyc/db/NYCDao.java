@@ -37,4 +37,92 @@ public class NYCDao {
 	}
 	
 	
+	
+	
+	public List<String> getAllBorhi(){
+		
+		String sql = " select distinct hl.Borough "
+				+ "from  nyc_wifi_hotspot_locations hl "
+				+ "order by hl.`Borough` asc ";
+		
+		
+		List<String> result = new ArrayList<>();
+		try {
+			Connection conn = DBConnect.getConnection();
+			PreparedStatement st = conn.prepareStatement(sql);
+			ResultSet res = st.executeQuery();
+
+			while (res.next()) {
+				result.add(res.getString("hl.Borough"));
+			}
+			
+			conn.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw new RuntimeException("SQL Error");
+		}
+
+		return result;
+	}
+	
+	
+	// per vertici 
+public List<String> getVertici(String n){
+		
+		String sql = " select distinct hl.`NTAName` "
+				+ "from  nyc_wifi_hotspot_locations hl "
+				+ "where hl.`Borough`= ?  "; 
+		
+		
+		List<String> result = new ArrayList<>();
+		try {
+			Connection conn = DBConnect.getConnection();
+			PreparedStatement st = conn.prepareStatement(sql);
+			st.setString(1, n);
+			ResultSet res = st.executeQuery();
+
+			while (res.next()) {
+				result.add(res.getString("hl.NTAName"));
+			}
+			
+			conn.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw new RuntimeException("SQL Error");
+		}
+
+		return result;
+	}
+
+public List<String> getAllSSDI(String ntaName) {
+	
+//	String sql = "select distinct hl.`SSID` "
+//			+ "from  nyc_wifi_hotspot_locations hl "
+//			+ "where hl.`NTAName`= ? "; 
+
+	String sql ="select l.SSID "
+			+ "from nyc_wifi_hotspot_locations l  "
+			+ "where l.`NTAName`=? "
+			+ "group  by l.SSID " ;
+	
+	List<String> result = new ArrayList<>();
+	try {
+		Connection conn = DBConnect.getConnection();
+		PreparedStatement st = conn.prepareStatement(sql);
+		st.setString(1,ntaName);
+		
+		ResultSet res = st.executeQuery();
+
+		while (res.next()) {
+			result.add(res.getString("l.SSID"));
+		}
+		
+		conn.close();
+	} catch (SQLException e) {
+		e.printStackTrace();
+		throw new RuntimeException("SQL Error");
+	}
+
+	return result;
+}
 }
